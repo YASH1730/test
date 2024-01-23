@@ -1,0 +1,7 @@
+library(readr)
+
+train_set <- read_csv("mnist_train.csv", col_names = FALSE)
+test_set <- read_csv("mnist_test.csv", col_names = FALSE)
+train_labels <- as.factor(train_set[, 1]$X1)
+test_labels <- as.factor(test_set[, 1]$X1)
+head(train_labels, 20)
