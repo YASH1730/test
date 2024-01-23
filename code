@@ -1,0 +1,35 @@
+# Install and load necessary packages
+install.packages("tidyverse")
+install.packages("caret")
+
+library(tidyverse)
+library(caret)
+library(kknn)
+
+# Load the dataset
+data <- read.csv('train.csv')
+
+# Extract the labels and pixel values
+labels <- data$label
+pixels <- data[, -1]  # Exclude the label column
+
+# Normalize the pixel values to the range [0, 1]
+pixels <- pixels / 255.0
+
+# Split the data into training and validation sets
+set.seed(42)
+splitIndex <- createDataPartition(labels, p = 0.8, list = FALSE)
+X_train <- pixels[splitIndex, ]
+y_train <- labels[splitIndex]
+X_val <- pixels[-splitIndex, ]
+y_val <- labels[-splitIndex]
+
+# Train the KNN model
+knn_model <- kknn(label ~ ., train = data.frame(label = y_train, X_train), test = X_val, k = 3)
+
+# Make predictions on the validation set
+predictions <- as.factor(predict(knn_model, X_val)$class)
+
+# Evaluate the model on the validation set
+accuracy <- sum(predictions == as.factor(y_val)) / length(y_val)
+cat("Validation Accuracy:", accuracy, "\n")
