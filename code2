@@ -5,3 +5,20 @@ test_set <- read_csv("mnist_test.csv", col_names = FALSE)
 train_labels <- as.factor(train_set[, 1]$X1)
 test_labels <- as.factor(test_set[, 1]$X1)
 head(train_labels, 20)
+
+summary(train_labels)
+
+#Model Training
+library(randomForest)
+
+#Model Evaluation
+rf <- randomForest(x = train_set, y = train_labels, xtest = test_set, ntree = 50)
+rf
+
+1 - mean(rf$err.rate)
+
+library(dplyr)
+err_df <- as.data.frame(rf$err.rate)
+err_df %>%
+  select(-"OOB") %>%
+  colMeans()
